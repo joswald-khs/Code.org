@@ -8,16 +8,15 @@ import java.util.ArrayList;
  * @version (a version number or a date)
  */
 public class Painter {
-    private final GridCanvas sketch;
+    static final Color DEFAULT_COLOR = new Color(100);
+    protected final GridCanvas sketch;
     Location location;
     List<PaintedLocation> paintedLocations;
-    Color currentColor;
     Direction currentDirection;
     
     public Painter() {
         sketch = GridCanvas.getCanvas();
         location = new Location(0,0);
-        currentColor = new Color(100,100,100);
         currentDirection = Direction.EAST;
         paintedLocations = new ArrayList<PaintedLocation>();
     }
@@ -41,7 +40,11 @@ public class Painter {
     }
     
     public void paint() {
-        paintedLocations.add( new PaintedLocation( location, currentColor ) );
+        paint( DEFAULT_COLOR );
+    }
+    
+    public void paint(Color c) {
+        paintedLocations.add( new PaintedLocation( location, c ) );
     }
     
     public void move() {
@@ -51,6 +54,10 @@ public class Painter {
     
     public void turnLeft() {
         currentDirection = currentDirection.left(); 
+    }
+    
+    public void turnRight() {
+        currentDirection = currentDirection.right();
     }
     
     
@@ -66,23 +73,28 @@ public class Painter {
         NORTH {
             public float radians() { return 3 * GridCanvas.getCanvas().PI / 2; }
             public Location change() { return new Location(0,-1); }
-            public Direction left() { return WEST; }                
+            public Direction left() { return WEST; }
+            public Direction right() { return EAST; }
         }, EAST {
             public float radians() { return 0; }
             public Location change() { return new Location(1,0); }
             public Direction left() { return NORTH; }
+            public Direction right() { return SOUTH; }
         }, SOUTH {
             public float radians() { return GridCanvas.getCanvas().PI / 2; }
             public Location change() { return new Location(0,1); }
             public Direction left() { return EAST; }
+            public Direction right() { return WEST; }
         }, WEST {
             public float radians() { return GridCanvas.getCanvas().PI; }
             public Location change() { return new Location(-1,0); }
             public Direction left() { return SOUTH; }
+            public Direction right() { return NORTH; }
         };
         
         public abstract float radians();
         public abstract Location change();
         public abstract Direction left();
+        public abstract Direction right();
     }
 }
